@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nancy 🎁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF1E4;
+    --maroon:#B3123B;
+    --maroon-dark:#7C0C29;
+    --gold:#D9A441;
+    --kitkat-red:#C8102E;
+    --ink:#3A2118;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; height:100%;
+    background:radial-gradient(circle at 50% 20%, #FFF8ED 0%, var(--cream) 55%, #F3E3C7 100%);
+    font-family:'Fraunces', serif;
+    color:var(--ink);
+    overflow:hidden;
+  }
+  .stage{
+    position:relative;
+    width:100%; height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+    padding:24px;
+  }
+  .eyebrow{
+    font-family:'Caveat', cursive;
+    font-size:28px;
+    color:var(--maroon);
+    letter-spacing:0.5px;
+    margin-bottom:6px;
+  }
+  h1{
+    font-weight:600;
+    font-size:clamp(28px,6vw,44px);
+    margin:0 0 28px 0;
+    color:var(--maroon-dark);
+  }
+  /* ---------- Gift box ---------- */
+  .gift-wrap{
+    cursor:pointer;
+    position:relative;
+    width:180px; height:150px;
+    transition:transform .25s ease;
+  }
+  .gift-wrap:hover{ transform:scale(1.04); }
+  .gift-wrap:active{ transform:scale(0.97); }
+  .lid{
+    position:absolute; top:-26px; left:-10px;
+    width:200px; height:40px;
+    background:linear-gradient(180deg,var(--maroon) 0%, var(--maroon-dark) 100%);
+    border-radius:8px;
+    box-shadow:0 6px 10px rgba(0,0,0,0.15);
+    transition:transform .55s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
+    z-index:3;
+  }
+  .box{
+    position:absolute; top:14px; left:0;
+    width:180px; height:136px;
+    background:linear-gradient(180deg,var(--maroon) 0%, var(--maroon-dark) 100%);
+    border-radius:6px;
+    box-shadow:0 10px 24px rgba(120,10,30,0.25);
+    overflow:hidden;
+  }
+  .ribbon-v{
+    position:absolute; top:0; bottom:0; left:50%;
+    width:26px; margin-left:-13px;
+    background:var(--gold);
+  }
+  .ribbon-h{
+    position:absolute; left:-10px; right:-10px; top:14px;
+    height:26px; margin-top:-13px;
+    background:var(--gold);
+    z-index:4;
+  }
+  .bow{
+    position:absolute; top:-46px; left:50%; transform:translateX(-50%);
+    width:70px; height:34px; z-index:5;
+    transition:transform .55s cubic-bezier(.34,1.56,.64,1), opacity .4s ease;
+  }
+  .bow::before, .bow::after{
+    content:''; position:absolute; top:0; width:32px; height:32px;
+    background:var(--gold); border-radius:50% 50% 50% 0;
+  }
+  .bow::before{ left:1px; transform:rotate(-40deg); }
+  .bow::after{ right:1px; border-radius:50% 50% 0 50%; transform:rotate(40deg); }
+  .hint{
+    margin-top:26px;
+    font-family:'Caveat', cursive;
+    font-size:22px;
+    color:#8a5a3a;
+  }
+  .gift-wrap.open .lid{ transform:translateY(-90px) rotate(-18deg); opacity:0; }
+  .gift-wrap.open .bow{ transform:translateY(-90px) translateX(-50%) rotate(-18deg); opacity:0; }
+  .kitkat-peek{
+    position:absolute; top:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    width:46px; height:100px;
+    opacity:0;
+    transition:opacity .4s ease .3s, transform .4s ease .3s;
+    z-index:2;
+  }
+  .gift-wrap.open .kitkat-peek{ opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+  /* message that appears after opening */
+  .msg1{
+    font-family:'Dancing Script', cursive;
+    font-weight:700;
+    font-size:clamp(38px,10vw,68px);
+    line-height:1.2;
+    color:var(--maroon-dark);
+    margin-top:30px;
+    opacity:0; transform:translateY(12px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .msg1.show{ opacity:1; transform:translateY(0); }
+  .tap-again{
+    font-family:'Caveat', cursive;
+    font-size:20px; color:#8a5a3a;
+    margin-top:14px;
+    opacity:0; transition:opacity .5s ease .3s;
+  }
+  .tap-again.show{ opacity:1; }
+
+  /* ---------- KitKat stage ---------- */
+  #stage2{ display:none; }
+  .kitkat{
+    position:relative;
+    width:min(260px, 80vw); height:340px;
+    cursor:pointer;
+    transition:transform .25s ease;
+  }
+  .kitkat:hover{ transform:scale(1.03) rotate(-1deg); }
+  .wrapper{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg,var(--kitkat-red) 0%, #a10c22 100%);
+    border-radius:10px;
+    box-shadow:0 14px 26px rgba(0,0,0,0.25);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .7s cubic-bezier(.6,-0.2,.3,1.3), opacity .6s ease;
+    z-index:3;
+  }
+  .wrapper .brand{
+    color:#fff; font-weight:600; letter-spacing:3px;
+    font-size:20px; font-family:'Fraunces',serif;
+    transform:rotate(0deg);
+  }
+  .wrapper .brand small{ display:block; font-family:'Caveat',cursive; font-size:14px; letter-spacing:1px; margin-top:4px; }
+  .kitkat.unwrapped .wrapper{
+    transform:translateY(-160px) rotate(-24deg);
+    opacity:0.15;
+  }
+  .foil{
+    position:absolute; inset:6px;
+    background:linear-gradient(135deg,#d8d8d8, #f4f4f4 40%, #cfcfcf 100%);
+    border-radius:8px;
+    display:flex; flex-direction:column;
+  }
+  .finger{
+    flex:1; border-bottom:2px dashed rgba(120,80,40,0.35);
+    background:linear-gradient(180deg,#8a4a20,#6f3714);
+    margin:4px;
+    border-radius:4px;
+  }
+  .finger:last-child{ border-bottom:none; }
+  .note{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; transition:opacity .6s ease .5s;
+  }
+  .kitkat.unwrapped .note{ opacity:1; }
+  .note p{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:clamp(20px,5vw,27px);
+    line-height:1.5;
+    color:#5B2A1A;
+    margin:0;
+  }
+  .kk-hint{
+    margin-top:24px;
+    font-family:'Caveat', cursive;
+    font-size:20px; color:#8a5a3a;
+  }
+  .confetti{
+    position:fixed; top:-20px; width:8px; height:14px; opacity:0.9;
+    animation:fall linear forwards;
+    z-index:10;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); opacity:0.3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage1">
+  <div class="eyebrow">ek gift hai tere liye</div>
+  <h1>Nancy 🎂</h1>
+  <div class="gift-wrap" id="giftWrap" onclick="openGift()">
+    <div class="bow"></div>
+    <div class="lid"></div>
+    <div class="ribbon-h"></div>
+    <div class="box"><div class="ribbon-v"></div></div>
+    <svg class="kitkat-peek" viewBox="0 0 46 100">
+      <rect x="0" y="0" width="46" height="100" rx="6" fill="#C8102E"/>
+      <text x="23" y="52" fill="#fff" font-size="9" font-family="Fraunces, serif" text-anchor="middle" font-weight="600">KIT</text>
+      <text x="23" y="64" fill="#fff" font-size="9" font-family="Fraunces, serif" text-anchor="middle" font-weight="600">KAT</text>
+    </svg>
+  </div>
+  <div class="hint" id="hint1">tap the gift ↑</div>
+  <div class="msg1" id="msg1">Happy Birthday Nancy 🎉</div>
+  <div class="tap-again" id="tapAgain">ab is gift ko dobara tap kar…</div>
+</div>
+
+<div class="stage" id="stage2">
+  <div class="eyebrow">iske andar se ek kitkat nikla</div>
+  <h1 style="margin-bottom:14px;">isko unwrap kar</h1>
+  <div class="kitkat" id="kitkat" onclick="unwrapKitkat()">
+    <div class="foil">
+      <div class="finger"></div>
+      <div class="finger"></div>
+      <div class="finger"></div>
+      <div class="note">
+        <p>Happy Birthday Nancy 🎂<br>You mean very special to me always.<br><br>
+        Hum chahe kitne bhi dino baad phone ya message kare,<br>
+        lekin hum hamesha peheli jaisi hi baat karenge. 🤍</p>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="brand">KITKAT<small>have a break</small></div>
+    </div>
+  </div>
+  <div class="kk-hint" id="kkHint">tap the kitkat ↑</div>
+</div>
+
+<script>
+function launchConfetti(){
+  const colors = ['#B3123B','#D9A441','#7C0C29','#F3D9A0'];
+  for(let i=0;i<50;i++){
+    const c = document.createElement('div');
+    c.className='confetti';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration = (2 + Math.random()*1.5)+'s';
+    c.style.transform = 'rotate('+Math.random()*360+'deg)';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3600);
+  }
+}
+
+let openedOnce = false;
+function openGift(){
+  const wrap = document.getElementById('giftWrap');
+  const hint1 = document.getElementById('hint1');
+  const msg1 = document.getElementById('msg1');
+  const tapAgain = document.getElementById('tapAgain');
+
+  if(!openedOnce){
+    wrap.classList.add('open');
+    hint1.style.display='none';
+    launchConfetti();
+    setTimeout(()=>{
+      msg1.classList.add('show');
+      tapAgain.classList.add('show');
+    }, 350);
+    openedOnce = true;
+  } else {
+    document.getElementById('stage1').style.display='none';
+    document.getElementById('stage2').style.display='flex';
+  }
+}
+
+function unwrapKitkat(){
+  const kk = document.getElementById('kitkat');
+  const hint = document.getElementById('kkHint');
+  if(kk.classList.contains('unwrapped')) return;
+  kk.classList.add('unwrapped');
+  hint.style.display='none';
+  launchConfetti();
+}
+</script>
+
+</body>
+</html>
